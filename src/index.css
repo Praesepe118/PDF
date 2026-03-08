@@ -1,0 +1,42 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Serif+SC:wght@400;700;900&display=swap');
+
+@theme {
+  --font-gothic: "Noto Serif SC", "Cinzel", serif;
+  --font-serif: "Noto Serif SC", "Crimson Text", serif;
+  --color-gothic-bg: #0f0f0f;
+  --color-gothic-card: #1a1a1a;
+  --color-gothic-accent: #8a0303;
+  --color-gothic-gold: #d4af37;
+  --color-gothic-text: #e0e0e0;
+  --color-gothic-text-muted: #a0a0a0;
+}
+
+.react-pdf__Page__textContent span {
+  cursor: crosshair !important;
+}
+
+.react-pdf__Page__textContent span:hover {
+  background-color: rgba(212, 175, 55, 0.3) !important;
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f0f0f; 
+}
+ 
+::-webkit-scrollbar-thumb {
+  background: #333; 
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8a0303; 
+}
+
