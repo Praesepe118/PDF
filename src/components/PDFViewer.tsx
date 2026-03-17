@@ -5,44 +5,11 @@ import 'react-pdf/dist/Page/TextLayer.css';
 import { Point } from '../types';
 import { GOTHIC_THEME } from '../constants';
 import { Loader2, ZoomIn, ZoomOut, RotateCw } from 'lucide-react';
-import * as ReactWindow from 'react-window';
-import * as AutoSizerPkg from 'react-virtualized-auto-sizer';
-
-// Robust import resolution for react-window
-let VariableSizeList: any = null;
-try {
-  // Try named export first
-  if ((ReactWindow as any).VariableSizeList) {
-    VariableSizeList = (ReactWindow as any).VariableSizeList;
-  } 
-  // Try default export property
-  else if ((ReactWindow as any).default?.VariableSizeList) {
-    VariableSizeList = (ReactWindow as any).default.VariableSizeList;
-  }
-  // Try default export itself if it looks like a component
-  else if ((ReactWindow as any).default) {
-    VariableSizeList = (ReactWindow as any).default;
-  }
-} catch (e) {
-  console.error("Failed to resolve VariableSizeList", e);
-}
-
-// Robust import resolution for react-virtualized-auto-sizer
-let AutoSizer: any = null;
-try {
-  if ((AutoSizerPkg as any).default) {
-    AutoSizer = (AutoSizerPkg as any).default;
-  } else if ((AutoSizerPkg as any).AutoSizer) {
-    AutoSizer = (AutoSizerPkg as any).AutoSizer;
-  } else {
-    AutoSizer = AutoSizerPkg;
-  }
-} catch (e) {
-  console.error("Failed to resolve AutoSizer", e);
-}
+import { VariableSizeList } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 
 interface PDFViewerProps {
-  file: File;
+  file: File | string;
   onPointClick: (point: Point) => void;
   lastPoint: Point | null;
 }
@@ -57,40 +24,42 @@ const PageRow = ({ index, style, data }: any) => {
   const pageNumber = index + 1;
 
   return (
-    <div style={{ ...style, display: 'flex', justifyContent: 'center', padding: '20px 0' }}>
-      <div 
-        className="relative group shadow-[0_0_30px_rgba(0,0,0,0.5)] transition-shadow duration-300 hover:shadow-[0_0_40px_rgba(138,3,3,0.2)]"
-        onContextMenu={(e) => onPageContextMenu(e, index)}
-        style={{ width: pageWidth, height: pageHeight }}
-      >
-        <Page
-          pageNumber={pageNumber}
-          scale={scale}
-          rotate={rotation}
-          renderTextLayer={true}
-          renderAnnotationLayer={true}
-          className="border border-[#2a2a2a]"
-          loading={
-            <div className="flex items-center justify-center bg-[#1a1a1a] text-[#555] font-gothic text-xs" style={{ width: pageWidth, height: pageHeight }}>
-              Loading...
-            </div>
-          }
-        />
-        
-        {/* Page Number Overlay */}
-        <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[#555] font-gothic text-sm">
-          第 {pageNumber} 页
-        </div>
-
-        {/* Visual Marker for Last Point */}
-        {lastPoint && lastPoint.pageIndex === index && (
-          <div 
-            className="absolute w-4 h-4 bg-[#8a0303] rounded-full border-2 border-[#d4af37] shadow-[0_0_10px_#8a0303] animate-pulse pointer-events-none z-20"
-            style={{ 
-              display: 'none' // Still hiding as per previous logic
-            }} 
+    <div style={style}>
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '20px 0' }}>
+        <div 
+          className="relative group shadow-[0_0_30px_rgba(0,0,0,0.5)] transition-shadow duration-300 hover:shadow-[0_0_40px_rgba(138,3,3,0.2)]"
+          onContextMenu={(e) => onPageContextMenu(e, index)}
+          style={{ width: pageWidth, height: pageHeight }}
+        >
+          <Page
+            pageNumber={pageNumber}
+            scale={scale}
+            rotate={rotation}
+            renderTextLayer={true}
+            renderAnnotationLayer={true}
+            className="border border-[#2a2a2a]"
+            loading={
+              <div className="flex items-center justify-center bg-[#1a1a1a] text-[#555] font-gothic text-xs" style={{ width: pageWidth, height: pageHeight }}>
+                Loading...
+              </div>
+            }
           />
-        )}
+          
+          {/* Page Number Overlay */}
+          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[#555] font-gothic text-sm">
+            第 {pageNumber} 页
+          </div>
+
+          {/* Visual Marker for Last Point */}
+          {lastPoint && lastPoint.pageIndex === index && (
+            <div 
+              className="absolute w-4 h-4 bg-[#8a0303] rounded-full border-2 border-[#d4af37] shadow-[0_0_10px_#8a0303] animate-pulse pointer-events-none z-20"
+              style={{ 
+                display: 'none' // Still hiding as per previous logic
+              }} 
+            />
+          )}
+        </div>
       </div>
     </div>
   );

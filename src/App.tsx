@@ -15,6 +15,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version ||
 
 export default function App() {
   const [file, setFile] = useState<File | null>(null);
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [lastPoint, setLastPoint] = useState<Point | null>(null);
   const [segments, setSegments] = useState<Segment[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -24,19 +25,27 @@ export default function App() {
 
   // Load PDF document proxy when file changes
   useEffect(() => {
+    let objectUrl: string | null = null;
     if (file) {
       const loadPdf = async () => {
-        const arrayBuffer = await file.arrayBuffer();
-        const loadingTask = pdfjs.getDocument(arrayBuffer);
+        objectUrl = URL.createObjectURL(file);
+        setFileUrl(objectUrl);
+        const loadingTask = pdfjs.getDocument(objectUrl);
         const doc = await loadingTask.promise;
         setPdfDocument(doc);
         setNumPages(doc.numPages);
       };
       loadPdf();
     } else {
+      setFileUrl(null);
       setPdfDocument(null);
       setNumPages(0);
     }
+    return () => {
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
   }, [file]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -194,9 +203,6 @@ export default function App() {
                 <h1 className="text-5xl font-gothic text-[#d4af37] tracking-widest drop-shadow-[0_0_10px_rgba(212,175,55,0.3)]">
                   CODEX EXTRACTOR
                 </h1>
-                <p className="text-serif text-[#888] italic text-lg">
-                  "揭示卷轴中隐藏的文字。"
-                </p>
               </div>
 
               <div className="relative group cursor-pointer">
@@ -263,7 +269,7 @@ export default function App() {
 
             <PDFViewer 
               ref={pdfViewerRef}
-              file={file} 
+              file={fileUrl || file} 
               onPointClick={handlePointClick} 
               lastPoint={lastPoint}
             />
